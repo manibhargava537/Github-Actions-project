@@ -22,7 +22,7 @@ jobs:
         run: mvn compile
 
   security-checks:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v4
