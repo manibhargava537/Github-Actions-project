@@ -23,6 +23,7 @@ jobs:
 
   security-checks:
     runs-on: self-hosted
+    needs: compile
 
     steps:
       - uses: actions/checkout@v4
