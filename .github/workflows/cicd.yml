@@ -49,15 +49,19 @@ jobs:
       - name: Gitleaks Code Scan
         run: gitleaks detect --source . --report-path=gitleaks-report.json --report-format=json
 
-      # Optional: upload reports as artifacts
-      # - name: Upload Trivy Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: trivy-report
-      #     path: fs-report.json
 
-      # - name: Upload Gitleaks Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: gitleaks-report
-      #     path: gitleaks-report.json
+  test:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Unit Test Cases
+        run: mvn test
