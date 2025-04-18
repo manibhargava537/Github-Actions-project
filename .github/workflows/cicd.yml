@@ -2,7 +2,8 @@ name: CICD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: 
+      - "main"
 
 jobs:
   compile:
@@ -18,7 +19,7 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn compile
-      
+
   security-check:
     runs-on: self-hosted
     needs: compile
@@ -43,6 +44,7 @@ jobs:
   test:
     runs-on: self-hosted
     needs: security-check
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -57,6 +59,7 @@ jobs:
   build_project_and_sonar_scan:
     runs-on: self-hosted
     needs: test
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -90,6 +93,7 @@ jobs:
   build_and_push_docker_image:
     runs-on: self-hosted
     needs: build_project_and_sonar_scan
+
     steps:
     - uses: actions/checkout@v4
     - name: Download JAR artifact
@@ -115,6 +119,7 @@ jobs:
   deploy_to_kubernetes:
     runs-on: self-hosted
     needs: build_and_push_docker_image
+
     steps:
     - uses: actions/checkout@v4
     - name: Install/Update AWS CLI
