@@ -8,7 +8,6 @@ on:
 jobs:
   compile:
     runs-on: self-hosted
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -23,7 +22,6 @@ jobs:
   security-check:
     runs-on: self-hosted
     needs: compile
-
     steps:
     - uses: actions/checkout@v4
     - name: Install Trivy
@@ -44,7 +42,6 @@ jobs:
   test:
     runs-on: self-hosted
     needs: security-check
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -59,7 +56,6 @@ jobs:
   build_project_and_sonar_scan:
     runs-on: self-hosted
     needs: test
-
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -93,7 +89,6 @@ jobs:
   build_and_push_docker_image:
     runs-on: self-hosted
     needs: build_project_and_sonar_scan
-
     steps:
     - uses: actions/checkout@v4
     - name: Download JAR artifact
@@ -119,27 +114,29 @@ jobs:
   deploy_to_kubernetes:
     runs-on: self-hosted
     needs: build_and_push_docker_image
-
     steps:
     - uses: actions/checkout@v4
+
     - name: Install/Update AWS CLI
       run: |
         curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip -o awscliv2.zip
         sudo ./aws/install --update
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
+
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
       with:
         version: latest
-    - name: Configure kubeconfig
-      run: |
-        mkdir -p $HOME/.kube
-        echo "${{ secrets.EKS_KUBECONFIG }}" > $HOME/.kube/config
+
+    - name: Update kubeconfig for EKS
+      run: aws eks update-kubeconfig --name your-cluster-name --region us-east-1
+
     - name: Deploy to EKS
-      run: kubectl apply -f ds.yml
+      run: kubectl apply -f manifests/ds.yml --validate=false
