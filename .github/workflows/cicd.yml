@@ -65,12 +65,12 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build Project
-      run: mvn package
+      run: mvn clean package
     - name: Upload JAR artifact
       uses: actions/upload-artifact@v4
       with:
         name: app-jar
-        path: target/*.jar 
+        path: target/*.jar
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v5.0.0
       with:
@@ -116,28 +116,22 @@ jobs:
     needs: build_and_push_docker_image
     steps:
     - uses: actions/checkout@v4
-
     - name: Install/Update AWS CLI
       run: |
-        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        curl "https://awscli.amazonaws.com/awscliv2-exe-linux-x86_64.zip" -o "awscliv2.zip"
         unzip -o awscliv2.zip
         sudo ./aws/install --update
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-
     - name: Set up kubectl
       uses: azure/setup-kubectl@v3
       with:
         version: latest
-
     - name: Update kubeconfig for EKS
       run: aws eks update-kubeconfig --name mani-eks-T3iryGHy --region us-east-1
-
-
     - name: Deploy to EKS
       run: kubectl apply -f manifests/ds.yml --validate=false
