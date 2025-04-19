@@ -9,8 +9,8 @@ RUN ls -l
 # Set the environment variable for the app's home directory
 ENV APP_HOME /usr/src/app
 
-# Copy the .jar file into the container (ensure the path is correct)
-COPY *.jar $APP_HOME/app.jar
+# Copy the .jar file from the target directory into the container (ensure the path is correct)
+COPY target/*.jar $APP_HOME/app.jar
 
 # Set working directory
 WORKDIR $APP_HOME
@@ -20,6 +20,3 @@ RUN ls -l
 
 # Run the application
 CMD ["java", "-jar", "app.jar"]
-
-
-
