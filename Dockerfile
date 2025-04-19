@@ -4,7 +4,7 @@ FROM eclipse-temurin:17-jdk-alpine
 EXPOSE 8080
 
 # List the files during the build to check if the .jar file exists
-RUN ls -l
+RUN ls -l /usr/src/app
 
 # Set the environment variable for the app's home directory
 ENV APP_HOME /usr/src/app
