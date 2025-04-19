@@ -84,7 +84,7 @@ jobs:
         pollingTimeoutSec: 600
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: http://localhost:9000   # Updated to use localhost
+        SONAR_HOST_URL: http://35.175.199.102:9000  # Updated to use localhost
 
   build_and_push_docker_image:
     runs-on: self-hosted
