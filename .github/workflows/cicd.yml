@@ -77,15 +77,14 @@ jobs:
         projectBaseDir: .
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: http://35.175.199.102:9000  # Ensure both use the correct IP
-
+        SONAR_HOST_URL: http://35.175.199.102:9000
     - name: SonarQube Quality Gate check
       uses: sonarsource/sonarqube-quality-gate-action@master
       with:
         pollingTimeoutSec: 600
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: http://35.175.199.102:9000  # Ensure both use the correct IP
+        SONAR_HOST_URL: http://35.175.199.102:9000
 
   build_and_push_docker_image:
     runs-on: self-hosted
@@ -109,7 +108,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: bhargava05/bankapp:latest
+        tags: bhargava05/bankapp:${{ github.sha }}
         file: ./Dockerfile
 
   deploy_to_kubernetes:
@@ -136,3 +135,5 @@ jobs:
       run: aws eks update-kubeconfig --name mani-eks-T3iryGHy --region us-east-1
     - name: Deploy to EKS
       run: kubectl apply -f ds.yml --validate=false
+    - name: Verify Deployment
+      run: kubectl rollout status deployment/bankapp-deployment --timeout=300s
