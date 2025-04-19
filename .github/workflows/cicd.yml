@@ -135,4 +135,4 @@ jobs:
     - name: Update kubeconfig for EKS
       run: aws eks update-kubeconfig --name mani-eks-T3iryGHy --region us-east-1
     - name: Deploy to EKS
-      run: kubectl apply -f manifests/ds.yml --validate=false
+      run: kubectl apply -f ds.yml --validate=false
